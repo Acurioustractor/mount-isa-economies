@@ -16,25 +16,36 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load services from backend API
 async function loadServices() {
     try {
-        // In production, this would call your API
-        // For now, we'll use the exported CSV files
+        console.log('🔄 Fetching services from API...');
         const response = await fetch('/api/services');
 
+        console.log('📡 API response status:', response.status, response.statusText);
+
         if (!response.ok) {
-            // Fallback: show sample data
+            console.error('❌ API response not OK:', response.status);
+            console.log('⚠️  Falling back to sample data');
             loadSampleServices();
             return;
         }
 
         const data = await response.json();
+        console.log('✅ API returned data:', {
+            totalServices: data.services.length,
+            stats: data.stats
+        });
+
         allServices = data.services;
+
+        console.log('📊 Loaded services:', allServices.length);
+        console.log('📍 Sample service:', allServices[0]);
 
         updateStats(data.stats);
         populateFilters();
         filterServices();
 
     } catch (error) {
-        console.log('API not available, loading sample data');
+        console.error('❌ Error loading from API:', error);
+        console.log('⚠️  Falling back to sample data');
         loadSampleServices();
     }
 }
