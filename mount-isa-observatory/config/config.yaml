@@ -1,0 +1,88 @@
+# Mount Isa Community Economic Observatory Configuration
+
+# Geographic Scope
+geography:
+  lga_name: "Mount Isa (C)"
+  lga_code: "LGA35300"
+  postcode: "4825"
+  asgs_edition: "2021"
+  state: "Queensland"
+
+# Database Configuration
+database:
+  host: "${DB_HOST:localhost}"
+  port: "${DB_PORT:5432}"
+  name: "${DB_NAME:mount_isa_observatory}"
+  user: "${DB_USER:postgres}"
+  password: "${DB_PASSWORD}"
+
+# API Keys (stored in .env file)
+api_keys:
+  abn_lookup_guid: "${ABN_LOOKUP_GUID}"
+  asic_api_key: "${ASIC_API_KEY}"
+
+# Data Sources
+data_sources:
+  # Australian Bureau of Statistics
+  abs:
+    sdmx_api: "https://api.data.abs.gov.au"
+    cabee_url: "https://www.abs.gov.au/statistics/economy/business-indicators/counts-australian-businesses"
+
+  # Australian Taxation Office
+  ato:
+    taxstats_url: "https://data.gov.au/data/dataset/taxation-statistics"
+
+  # AusTender (Commonwealth Procurement)
+  austender:
+    ocds_api: "https://www.tenders.gov.au/api/v1"
+    search_endpoint: "/cn/contractnotice"
+
+  # Queensland Government
+  qld_gov:
+    ckan_api: "https://data.qld.gov.au/api/3"
+    fpp_package: "queensland-government-forward-procurement-pipeline"
+    contracts_package: "queensland-government-awarded-contracts"
+
+  # ACNC (Charity Register)
+  acnc:
+    data_url: "https://data.gov.au/data/dataset/acnc-register"
+
+  # AIHW (Health Data)
+  aihw:
+    mbs_url: "https://www.aihw.gov.au/reports-data/myhospitals/sectors/medicare-benefits-schedule"
+    pbs_url: "https://www.aihw.gov.au/reports-data/health-welfare-services/pharmaceutical-benefits-scheme"
+
+  # DSS (Social Services)
+  dss:
+    payments_url: "https://data.gov.au/data/dataset/dss-payment-demographic-data"
+
+  # BITRE (Transport/Aviation)
+  bitre:
+    aviation_url: "https://www.bitre.gov.au/publications/ongoing/airport_traffic_data"
+
+  # ABN Lookup
+  abn_lookup:
+    api_url: "https://abr.business.gov.au/abrxmlsearch/AbrXmlSearch.asmx"
+    json_api: "https://abr.business.gov.au/json/"
+
+  # G-NAF (Geocoding)
+  gnaf:
+    data_url: "https://data.gov.au/data/dataset/geocoded-national-address-file-g-naf"
+
+# ETL Configuration
+etl:
+  raw_data_dir: "./data/raw"
+  staged_data_dir: "./data/staged"
+  processed_data_dir: "./data/processed"
+
+# Validation Rules
+validation:
+  max_z_score: 3.0
+  min_lga_match_rate: 0.95
+  sample_verification_count: 30
+
+# Dashboard Settings
+dashboard:
+  refresh_interval_hours: 24
+  localization_target_percent: 10
+  pilot_duration_months: 12
