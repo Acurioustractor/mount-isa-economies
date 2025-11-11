@@ -28,49 +28,84 @@ def load_services():
 
     all_services = []
 
+    print(f"\n📂 Loading services from: {DATA_DIR}")
+    print(f"   Directory exists: {DATA_DIR.exists()}")
+
+    if DATA_DIR.exists():
+        print(f"   Files in directory:")
+        for f in DATA_DIR.glob('*.csv'):
+            print(f"     • {f.name}")
+    print()
+
     # Load Mount Isa services
     mi_services_file = DATA_DIR / 'services_export.csv'
+    print(f"🔍 Looking for Mount Isa services: {mi_services_file}")
+    print(f"   Exists: {mi_services_file.exists()}")
+
     if mi_services_file.exists():
-        df = pd.read_csv(mi_services_file)
-        for idx, row in df.iterrows():
-            all_services.append({
-                'id': f'mi_{idx}',
-                'name': row.get('name'),
-                'category': row.get('category_id', 'General'),
-                'description': row.get('description'),
-                'location': row.get('suburb'),
-                'suburb': row.get('suburb'),
-                'state': row.get('state'),
-                'postcode': row.get('postcode'),
-                'phone': row.get('phone'),
-                'email': row.get('email'),
-                'website': row.get('website'),
-                'source': 'mount_isa_service_map',
-                'latitude': row.get('latitude'),
-                'longitude': row.get('longitude')
-            })
+        try:
+            df = pd.read_csv(mi_services_file)
+            print(f"   ✅ Loaded {len(df)} Mount Isa services")
+            print(f"   Columns: {list(df.columns)}")
+
+            for idx, row in df.iterrows():
+                all_services.append({
+                    'id': f'mi_{idx}',
+                    'name': str(row.get('name', 'Unknown')),
+                    'category': str(row.get('category_id', 'General')),
+                    'description': str(row.get('description', '')) if pd.notna(row.get('description')) else '',
+                    'location': str(row.get('suburb', '')) if pd.notna(row.get('suburb')) else '',
+                    'suburb': str(row.get('suburb', '')) if pd.notna(row.get('suburb')) else '',
+                    'state': str(row.get('state', '')) if pd.notna(row.get('state')) else '',
+                    'postcode': str(row.get('postcode', '')) if pd.notna(row.get('postcode')) else '',
+                    'phone': str(row.get('phone', '')) if pd.notna(row.get('phone')) else '',
+                    'email': str(row.get('email', '')) if pd.notna(row.get('email')) else '',
+                    'website': str(row.get('website', '')) if pd.notna(row.get('website')) else '',
+                    'source': 'mount_isa_service_map',
+                    'latitude': float(row.get('latitude')) if pd.notna(row.get('latitude')) else None,
+                    'longitude': float(row.get('longitude')) if pd.notna(row.get('longitude')) else None
+                })
+        except Exception as e:
+            print(f"   ❌ Error loading Mount Isa services: {e}")
+    else:
+        print(f"   ⚠️  File not found")
 
     # Load youth justice services
     yj_services_file = DATA_DIR / 'youth_justice_services_export.csv'
+    print(f"\n🔍 Looking for Youth Justice services: {yj_services_file}")
+    print(f"   Exists: {yj_services_file.exists()}")
+
     if yj_services_file.exists():
-        df = pd.read_csv(yj_services_file)
-        for idx, row in df.iterrows():
-            all_services.append({
-                'id': f'yj_{idx}',
-                'name': row.get('name'),
-                'category': row.get('taxonomy_term', 'Youth Services'),
-                'description': row.get('description'),
-                'location': row.get('suburb'),
-                'suburb': row.get('suburb'),
-                'state': row.get('state'),
-                'postcode': row.get('postal_code'),
-                'phone': row.get('phone'),
-                'email': row.get('email'),
-                'website': row.get('website'),
-                'source': 'youth_justice_services',
-                'latitude': row.get('latitude'),
-                'longitude': row.get('longitude')
-            })
+        try:
+            df = pd.read_csv(yj_services_file)
+            print(f"   ✅ Loaded {len(df)} Youth Justice services")
+            print(f"   Columns: {list(df.columns)[:10]}...")  # Show first 10 columns
+
+            for idx, row in df.iterrows():
+                all_services.append({
+                    'id': f'yj_{idx}',
+                    'name': str(row.get('name', 'Unknown')),
+                    'category': str(row.get('taxonomy_term', 'Youth Services')) if pd.notna(row.get('taxonomy_term')) else 'Youth Services',
+                    'description': str(row.get('description', '')) if pd.notna(row.get('description')) else '',
+                    'location': str(row.get('suburb', '')) if pd.notna(row.get('suburb')) else '',
+                    'suburb': str(row.get('suburb', '')) if pd.notna(row.get('suburb')) else '',
+                    'state': str(row.get('state', '')) if pd.notna(row.get('state')) else '',
+                    'postcode': str(row.get('postal_code', '')) if pd.notna(row.get('postal_code')) else '',
+                    'phone': str(row.get('phone', '')) if pd.notna(row.get('phone')) else '',
+                    'email': str(row.get('email', '')) if pd.notna(row.get('email')) else '',
+                    'website': str(row.get('website', '')) if pd.notna(row.get('website')) else '',
+                    'source': 'youth_justice_services',
+                    'latitude': float(row.get('latitude')) if pd.notna(row.get('latitude')) else None,
+                    'longitude': float(row.get('longitude')) if pd.notna(row.get('longitude')) else None
+                })
+        except Exception as e:
+            print(f"   ❌ Error loading Youth Justice services: {e}")
+            import traceback
+            traceback.print_exc()
+    else:
+        print(f"   ⚠️  File not found")
+
+    print(f"\n✅ Total services loaded: {len(all_services)}\n")
 
     services_cache = all_services
     return all_services
