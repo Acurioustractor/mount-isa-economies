@@ -235,7 +235,7 @@ if __name__ == '__main__':
     print("="*80)
     print(f"\nData directory: {DATA_DIR}")
     print("\nStarting server...")
-    print("Dashboard available at: http://localhost:5000")
+    print("Dashboard available at: http://localhost:8000")
     print("\nAPI Endpoints:")
     print("  • GET  /api/services - Get all services (with filtering)")
     print("  • GET  /api/organizations - Get all organizations")
@@ -244,4 +244,4 @@ if __name__ == '__main__':
     print("  • POST /api/update - Trigger data update")
     print("\n" + "="*80 + "\n")
 
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8000)
