@@ -39,7 +39,15 @@ try:
 
     # Load and filter for Mount Isa
     print("🔍 Filtering for Mount Isa region...")
-    df = pd.read_csv(raw_file)
+
+    # Try different CSV parsing options to handle malformed data
+    try:
+        df = pd.read_csv(raw_file, on_bad_lines='skip', encoding='utf-8')
+    except:
+        try:
+            df = pd.read_csv(raw_file, on_bad_lines='skip', encoding='latin-1')
+        except:
+            df = pd.read_csv(raw_file, error_bad_lines=False, encoding='utf-8')
 
     print(f"Total charities in Australia: {len(df):,}\n")
 

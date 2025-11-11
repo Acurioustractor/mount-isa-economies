@@ -50,7 +50,7 @@ try:
         'q': 'Queensland'  # Start with Queensland, then filter
     }
 
-    response = requests.get(GRANTS_DATA_URL, params=params, timeout=30)
+    response = requests.get(GRANTS_DATA_URL, params=params, timeout=30, allow_redirects=True)
 
     if response.status_code == 200:
         data = response.json()
