@@ -1,0 +1,10 @@
+# ABSOLUTE BARE MINIMUM - Just to run data ingestion
+# This will install in under 2 minutes
+
+pandas>=2.0.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+ckanapi>=4.7
+pyyaml>=6.0
