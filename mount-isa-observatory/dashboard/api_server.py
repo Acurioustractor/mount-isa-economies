@@ -235,7 +235,10 @@ if __name__ == '__main__':
     print("="*80)
     print(f"\nData directory: {DATA_DIR}")
     print("\nStarting server...")
-    print("Dashboard available at: http://localhost:8000")
+    # Use port from environment or default to 8080
+    port = int(os.getenv('PORT', 8080))
+
+    print(f"Dashboard available at: http://localhost:{port}")
     print("\nAPI Endpoints:")
     print("  • GET  /api/services - Get all services (with filtering)")
     print("  • GET  /api/organizations - Get all organizations")
@@ -244,4 +247,4 @@ if __name__ == '__main__':
     print("  • POST /api/update - Trigger data update")
     print("\n" + "="*80 + "\n")
 
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host='0.0.0.0', port=port)
