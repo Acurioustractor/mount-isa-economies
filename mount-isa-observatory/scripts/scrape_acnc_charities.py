@@ -51,14 +51,55 @@ try:
 
     print(f"Total charities in Australia: {len(df):,}\n")
 
+    # Show available columns
+    print("Available columns in ACNC data:")
+    for col in df.columns[:20]:  # Show first 20 columns
+        print(f"   • {col}")
+    print()
+
     # Filter for Mount Isa area (postcode 4825 and surrounding)
     mount_isa_postcodes = ['4825', '4823', '4824', '4828']  # Mount Isa and surrounding
 
-    mount_isa_charities = df[
-        df['Address_Post_Code'].astype(str).isin(mount_isa_postcodes) |
-        df['Charity_Legal_Name'].str.contains('Mount Isa', case=False, na=False) |
-        df['Charity_Legal_Name'].str.contains('Kalkadoon', case=False, na=False)
-    ]
+    # Find the right column names (they might vary)
+    name_col = None
+    postcode_col = None
+
+    for col in df.columns:
+        if 'name' in col.lower() and 'charity' in col.lower():
+            name_col = col
+        if 'post' in col.lower() and 'code' in col.lower():
+            postcode_col = col
+
+    # Build filter conditions
+    conditions = []
+
+    if postcode_col and postcode_col in df.columns:
+        print(f"✅ Using postcode column: {postcode_col}")
+        conditions.append(df[postcode_col].astype(str).isin(mount_isa_postcodes))
+
+    if name_col and name_col in df.columns:
+        print(f"✅ Using name column: {name_col}")
+        conditions.append(df[name_col].str.contains('Mount Isa', case=False, na=False))
+        conditions.append(df[name_col].str.contains('Kalkadoon', case=False, na=False))
+
+    # If we found any valid columns, filter
+    if conditions:
+        # Combine conditions with OR
+        combined_condition = conditions[0]
+        for condition in conditions[1:]:
+            combined_condition = combined_condition | condition
+        mount_isa_charities = df[combined_condition]
+    else:
+        print("⚠️  Could not find standard column names. Searching all text columns...")
+        # Search all text columns for Mount Isa or Kalkadoon
+        mask = pd.Series([False] * len(df))
+        for col in df.columns:
+            if df[col].dtype == 'object':  # Text column
+                try:
+                    mask = mask | df[col].str.contains('Mount Isa|Kalkadoon', case=False, na=False)
+                except:
+                    pass
+        mount_isa_charities = df[mask]
 
     print(f"✅ Found {len(mount_isa_charities)} charities operating in Mount Isa region\n")
 
