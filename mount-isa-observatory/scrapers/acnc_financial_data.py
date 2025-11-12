@@ -3,7 +3,7 @@ ACNC Financial Data Scraper
 Gets REAL financial data for charities: revenue, expenses, assets, employees
 
 Data source: https://data.gov.au/dataset/acnc-register
-Direct CSV download of ALL Australian charities with full financials
+Uses CKAN API to reliably download ACNC charity register
 """
 import requests
 import pandas as pd
@@ -19,43 +19,89 @@ print("\n" + "="*80)
 print("💰 ACNC FINANCIAL DATA SCRAPER")
 print("="*80 + "\n")
 
-# Direct download URL for ACNC register (updated regularly)
-ACNC_REGISTER_URL = "https://data.gov.au/data/dataset/b050b242-4487-4306-abf5-07ca073e5594/resource/1c50ad70-2f7e-4dd4-b835-2d91d5f60e3f/download/datadotgov_main.csv"
+# data.gov.au CKAN API (same approach that worked for QLD contracts)
+CKAN_URL = "https://data.gov.au/api/3/action"
+ACNC_DATASET_ID = "acnc-register"
 
-print(f"📥 Downloading ACNC charity register...")
-print(f"   Source: {ACNC_REGISTER_URL}\n")
+def get_dataset_resources(dataset_id):
+    """Get all resources (files) for a dataset"""
+    url = f"{CKAN_URL}/package_show"
+    params = {'id': dataset_id}
 
-try:
-    # Download with proper headers
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'Accept': 'text/csv,application/csv'
-    }
-
-    response = requests.get(ACNC_REGISTER_URL, headers=headers, timeout=120, stream=True)
+    response = requests.get(url, params=params, timeout=30)
     response.raise_for_status()
 
-    # Save raw file
-    raw_file = DATA_DIR / f'acnc_register_{datetime.now().strftime("%Y%m%d")}.csv'
+    data = response.json()
+    return data['result']['resources']
 
-    with open(raw_file, 'wb') as f:
+def download_csv(resource_url, output_file):
+    """Download a CSV resource"""
+    print(f"📥 Downloading: {resource_url}")
+
+    response = requests.get(resource_url, timeout=120, stream=True)
+    response.raise_for_status()
+
+    with open(output_file, 'wb') as f:
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
 
-    print(f"✅ Downloaded to: {raw_file}")
-    print(f"   File size: {raw_file.stat().st_size / 1024 / 1024:.1f} MB\n")
+    print(f"✅ Downloaded: {output_file.name}")
+    print(f"   File size: {output_file.stat().st_size / 1024 / 1024:.1f} MB\n")
 
-    # Load and analyze
+    return output_file
+
+try:
+    # 1. Get ACNC dataset resources
+    print("🔍 Finding ACNC charity register dataset...\n")
+
+    resources = get_dataset_resources(ACNC_DATASET_ID)
+    print(f"✅ Found {len(resources)} resources in ACNC dataset\n")
+
+    # 2. Find the main charity register CSV
+    charity_register = None
+
+    for resource in resources:
+        name = resource.get('name', '').lower()
+        format = resource.get('format', '').upper()
+
+        print(f"   • {resource['name']} ({format})")
+
+        # Look for main register CSV
+        if format == 'CSV' and any(term in name for term in ['register', 'charity', 'main']):
+            if not any(skip in name for skip in ['notes', 'guide', 'metadata', 'user']):
+                charity_register = resource
+                print(f"     ⭐ This looks like the main register!\n")
+
+    if not charity_register:
+        print("\n⚠️  Couldn't identify main register, using first CSV resource")
+        charity_register = next((r for r in resources if r.get('format', '').upper() == 'CSV'), None)
+
+    if not charity_register:
+        raise Exception("No CSV resources found in ACNC dataset")
+
+    print(f"\n📋 Using resource: {charity_register['name']}")
+    print(f"   Format: {charity_register.get('format')}")
+    print(f"   Last modified: {charity_register.get('last_modified', 'Unknown')}\n")
+
+    # 3. Download the CSV
+    raw_file = DATA_DIR / f'acnc_register_{datetime.now().strftime("%Y%m%d")}.csv'
+    download_csv(charity_register['url'], raw_file)
+
+    # 4. Load and analyze
     print("🔍 Loading and analyzing data...\n")
 
     # Try different encodings
-    try:
-        df = pd.read_csv(raw_file, encoding='utf-8', low_memory=False)
-    except:
+    df = None
+    for encoding in ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252']:
         try:
-            df = pd.read_csv(raw_file, encoding='latin-1', low_memory=False)
-        except:
-            df = pd.read_csv(raw_file, encoding='iso-8859-1', low_memory=False)
+            df = pd.read_csv(raw_file, encoding=encoding, low_memory=False)
+            print(f"✅ Loaded with {encoding} encoding\n")
+            break
+        except Exception as e:
+            continue
+
+    if df is None:
+        raise Exception("Could not load CSV with any encoding")
 
     print(f"✅ Loaded {len(df):,} charities\n")
 
@@ -64,17 +110,24 @@ try:
         print(f"   • {col}")
     print()
 
-    # Filter for Queensland
-    qld_charities = df[df['State'].str.contains('QLD', case=False, na=False)]
-    print(f"🗺️  Queensland charities: {len(qld_charities):,}\n")
+    # 5. Filter for Queensland
+    state_cols = [col for col in df.columns if 'state' in col.lower()]
 
-    # Filter for Mount Isa region
+    qld_charities = pd.DataFrame()
+    if state_cols:
+        state_col = state_cols[0]
+        print(f"🗺️  Using state column: {state_col}")
+        qld_charities = df[df[state_col].astype(str).str.contains('QLD|Queensland', case=False, na=False)]
+        print(f"   Found {len(qld_charities):,} Queensland charities\n")
+
+    # 6. Filter for Mount Isa region
+    print("🔍 Searching for Mount Isa charities...\n")
+
     mount_isa_postcodes = ['4825', '4823', '4824', '4828']
+    mount_isa_charities = pd.DataFrame()
 
     # Try different postcode column names
     postcode_cols = [col for col in df.columns if 'post' in col.lower() and 'code' in col.lower()]
-
-    mount_isa_charities = pd.DataFrame()
 
     if postcode_cols:
         postcode_col = postcode_cols[0]
@@ -82,33 +135,40 @@ try:
         mount_isa_charities = df[df[postcode_col].astype(str).isin(mount_isa_postcodes)]
 
     # Also search by name/location
-    name_cols = [col for col in df.columns if 'name' in col.lower() or 'charity' in col.lower()]
+    text_cols = [col for col in df.columns
+                 if any(term in col.lower() for term in ['name', 'charity', 'address', 'suburb', 'town'])]
 
-    for col in name_cols:
+    for col in text_cols:
         matches = df[df[col].astype(str).str.contains('Mount Isa|Kalkadoon', case=False, na=False)]
         mount_isa_charities = pd.concat([mount_isa_charities, matches]).drop_duplicates()
 
-    print(f"\n✅ Found {len(mount_isa_charities)} Mount Isa charities\n")
+    print(f"✅ Found {len(mount_isa_charities)} Mount Isa charities\n")
 
+    # 7. Display and save results
     if len(mount_isa_charities) > 0:
-        print("📊 Mount Isa Charities:\n")
+        print("="*80)
+        print("📊 MOUNT ISA CHARITIES")
+        print("="*80 + "\n")
+
+        # Find name column
+        name_cols = [col for col in mount_isa_charities.columns
+                    if 'name' in col.lower() and 'charity' in col.lower()]
+        if not name_cols:
+            name_cols = [col for col in mount_isa_charities.columns if 'name' in col.lower()]
+
+        name_col = name_cols[0] if name_cols else mount_isa_charities.columns[0]
 
         # Show financial data if available
         financial_cols = [col for col in mount_isa_charities.columns
-                         if any(term in col.lower() for term in ['revenue', 'income', 'expense', 'asset', 'employee'])]
+                         if any(term in col.lower() for term in ['revenue', 'income', 'expense', 'asset', 'employee', 'staff', 'volunteer'])]
 
         for idx, charity in mount_isa_charities.head(20).iterrows():
-            # Find name column
-            name = None
-            for col in ['Charity_Legal_Name', 'Organisation_Name', 'Name']:
-                if col in charity.index and pd.notna(charity[col]):
-                    name = charity[col]
-                    break
-
-            if not name:
-                name = str(charity[name_cols[0]]) if name_cols else "Unknown"
-
+            name = str(charity[name_col]) if pd.notna(charity[name_col]) else "Unknown"
             print(f"  • {name}")
+
+            # Show address/postcode
+            if postcode_cols and pd.notna(charity[postcode_cols[0]]):
+                print(f"    Postcode: {charity[postcode_cols[0]]}")
 
             # Show financial data if available
             for col in financial_cols[:5]:  # Show first 5 financial columns
@@ -148,16 +208,26 @@ try:
         print("  • Column names different than expected\n")
 
         # Save full QLD data for manual review
-        output_file = DATA_DIR / f'qld_charities_{datetime.now().strftime("%Y%m%d")}.csv'
-        qld_charities.to_csv(output_file, index=False)
-        print(f"💾 Saved {len(qld_charities):,} QLD charities for review: {output_file}\n")
+        if len(qld_charities) > 0:
+            output_file = DATA_DIR / f'qld_charities_{datetime.now().strftime("%Y%m%d")}.csv'
+            qld_charities.to_csv(output_file, index=False)
+            print(f"💾 Saved {len(qld_charities):,} QLD charities for review: {output_file}\n")
 
     print("="*80)
     print("✅ ACNC SCRAPE COMPLETE")
     print("="*80 + "\n")
 
+    print("💡 Next steps:")
+    print("  1. Review Mount Isa charities for financial data")
+    print("  2. Cross-reference with existing services database")
+    print("  3. Download Annual Information Statement data for detailed financials")
+    print("  4. Track charity programs and service delivery areas\n")
+
 except Exception as e:
     print(f"❌ Error: {e}")
     import traceback
     traceback.print_exc()
-    print("\nFallback: Download manually from https://data.gov.au/dataset/acnc-register")
+    print("\n💡 Manual fallback:")
+    print("  1. Visit: https://data.gov.au/dataset/acnc-register")
+    print("  2. Download CSV files manually")
+    print("  3. Place in mount-isa-observatory/data/acnc_financials/\n")

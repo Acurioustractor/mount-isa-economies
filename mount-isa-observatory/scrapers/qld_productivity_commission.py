@@ -21,9 +21,7 @@ print("\n" + "="*80)
 print("📊 QUEENSLAND PRODUCTIVITY COMMISSION SCRAPER")
 print("="*80 + "\n")
 
-class QPCScr
-
-aper:
+class QPCScraper:
     """Scrape QPC reports and data"""
 
     def __init__(self):
