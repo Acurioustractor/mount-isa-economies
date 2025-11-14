@@ -1,0 +1,18 @@
+# Minimal requirements for web scraping (Python 3.14 compatible)
+# Install with: pip install -r requirements-scraping.txt
+
+# Core
+pandas>=2.0.0
+numpy>=1.24.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Web Scraping
+beautifulsoup4>=4.12.0
+firecrawl-py>=0.0.16
+
+# ABN Lookup
+zeep>=4.2.0
+
+# Data formats
+openpyxl>=3.1.0
