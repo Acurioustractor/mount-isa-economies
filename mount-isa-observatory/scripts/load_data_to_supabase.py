@@ -232,6 +232,38 @@ class SupabaseDataLoader:
 
         return None
 
+    def parse_date(self, date_str: str) -> Optional[str]:
+        """
+        Parse date string to PostgreSQL-compatible format
+
+        Handles formats like:
+        - "2023-04-15" (full date)
+        - "2023-04" (year-month, converts to first day)
+        - "April 2023" (month name, converts to first day)
+
+        Args:
+            date_str: Date string
+
+        Returns:
+            Date in YYYY-MM-DD format or None
+        """
+        if pd.isna(date_str) or not date_str:
+            return None
+
+        try:
+            # Try parsing with pandas (handles many formats)
+            parsed = pd.to_datetime(date_str, format='mixed', errors='coerce')
+            if pd.notna(parsed):
+                return parsed.strftime('%Y-%m-%d')
+        except:
+            pass
+
+        # If it's just YYYY-MM, add day
+        if len(date_str) == 7 and date_str[4] == '-':
+            return f"{date_str}-01"
+
+        return None
+
     def get_or_create_document(
         self,
         doc_type: str,
@@ -284,7 +316,10 @@ class SupabaseDataLoader:
         if identifier:
             new_doc['document_identifier'] = identifier
         if publication_date:
-            new_doc['publication_date'] = publication_date
+            # Parse date to ensure PostgreSQL compatibility
+            parsed_date = self.parse_date(publication_date)
+            if parsed_date:
+                new_doc['publication_date'] = parsed_date
 
         result = self.supabase.table('documents').insert(new_doc).execute()
 
@@ -440,12 +475,19 @@ class SupabaseDataLoader:
             # Determine if Mount Isa specific
             is_mount_isa_specific = 'mount isa' in row['title'].lower()
 
+            # Parse announcement date
+            announcement_date = self.parse_date(row['date'])
+            if not announcement_date:
+                print(f"  ⚠️  Skipping - invalid announcement date: {row['date']}")
+                skipped_count += 1
+                continue
+
             announcement = {
                 'program_id': program_id,
                 'recipient_org_id': recipient_id,
                 'funding_body_id': qld_gov_id,
                 'amount_announced': amount,
-                'announcement_date': row['date'],
+                'announcement_date': announcement_date,
                 'funding_period_description': row['funding_period'] if pd.notna(row['funding_period']) else None,
                 'announced_by': row['minister'] if pd.notna(row['minister']) else None,
                 'source_document_id': doc_id,
