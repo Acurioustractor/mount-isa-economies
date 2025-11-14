@@ -90,7 +90,29 @@ class FundingFlowVisualizer:
         if not result.data:
             raise ValueError("❌ No data found in Supabase")
 
-        return pd.DataFrame(result.data)
+        df = pd.DataFrame(result.data)
+
+        # Rename columns to match CSV format for compatibility
+        df = df.rename(columns={
+            'amount_announced': 'amount',
+            'recipient_organization': 'recipient_clean'
+        })
+
+        # Add date column from announcement_date
+        if 'announcement_date' in df.columns:
+            df['date'] = df['announcement_date']
+
+        # Clean recipient names
+        if 'recipient_clean' in df.columns:
+            df['recipient_clean'] = df['recipient_clean'].fillna('Unspecified')
+        else:
+            df['recipient_clean'] = 'Unspecified'
+
+        # Ensure amount is numeric
+        if 'amount' in df.columns:
+            df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0)
+
+        return df
 
     def _parse_amount(self, amount_str) -> float:
         """Parse funding amount from string"""

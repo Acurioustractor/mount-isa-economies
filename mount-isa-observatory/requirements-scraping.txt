@@ -16,3 +16,10 @@ zeep>=4.2.0
 
 # Data formats
 openpyxl>=3.1.0
+
+# Database
+supabase>=2.0.0
+
+# Visualizations
+plotly>=5.0.0
+kaleido>=0.2.1
