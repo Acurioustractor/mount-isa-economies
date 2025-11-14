@@ -1,0 +1,135 @@
+[
+  {
+    "source": "acnc",
+    "record_type": "actual_payment",
+    "recipient_org": "Mithangkaya Nguli - Young People Ahead",
+    "url": "https://www.acnc.gov.au/charity/charities/02061bf8-38af-e811-a963-000d3ad244fd",
+    "extracted_date": "2025-11-14T20:51:53.998124",
+    "mount_isa_relevance": "High",
+    "note": "Financial data available at ACNC registry"
+  },
+  {
+    "source": "budget_papers",
+    "record_type": "budget_allocation",
+    "amount_type": "allocated",
+    "url": "https://budget.qld.gov.au/files/Budget-2024-25-SDS-Department-of-Youth-Justice-and-Victim-Support.pdf",
+    "extracted_date": "2025-11-14T20:51:55.999940",
+    "note": "PDF requires manual parsing or OCR"
+  },
+  {
+    "source": "budget_papers",
+    "record_type": "budget_allocation",
+    "amount_type": "allocated",
+    "url": "https://budget.qld.gov.au/files/Budget_2024-25_SDS_Queensland_Police_Service.pdf",
+    "extracted_date": "2025-11-14T20:51:58.000912",
+    "note": "PDF requires manual parsing or OCR"
+  },
+  {
+    "source": "annual_report",
+    "record_type": "report",
+    "funding_body": "Youth Justice",
+    "date": "2023-24",
+    "url": "https://www.publications.qld.gov.au/ckan-publications-attachments-prod/resources/3e45ff41-5e61-46c3-9d16-f3116cc70b4c/yj-annual-report-2023-2024.pdf",
+    "extracted_date": "2025-11-14T20:52:02.293499",
+    "note": "PDF requires OCR/parsing for Mount Isa mentions"
+  },
+  {
+    "source": "annual_report",
+    "record_type": "report",
+    "funding_body": "QPS",
+    "date": "2023-24",
+    "url": "https://www.police.qld.gov.au/sites/default/files/2024-09/QPS Annual Report 2023-24.pdf",
+    "extracted_date": "2025-11-14T20:52:02.293537",
+    "note": "PDF requires OCR/parsing for Mount Isa mentions"
+  },
+  {
+    "source": "parliament",
+    "record_type": "parliamentary_question",
+    "description": "Questions on Notice about Mount Isa youth justice spending",
+    "url": "https://www.parliament.qld.gov.au/work-of-assembly/questions-on-notice",
+    "extracted_date": "2025-11-14T20:52:02.293554",
+    "note": "Search required: \"Mount Isa\" + \"youth justice\" + \"funding\""
+  },
+  {
+    "source": "parliament",
+    "record_type": "estimates_hearing",
+    "date": "2024-08-01",
+    "description": "Minister announced Mithangkaya Nguli appointment in Mount Isa",
+    "url": "https://documents.parliament.qld.gov.au/com/EETSC-5CF2/C20242025-8DED/2024_08_01_EstimatesEEC.pdf",
+    "extracted_date": "2025-11-14T20:52:02.293557",
+    "mount_isa_relevance": "High"
+  },
+  {
+    "source": "grantconnect",
+    "record_type": "federal_grant",
+    "description": "Federal grants search: Mount Isa",
+    "url": "https://www.grants.gov.au/?event=public.search&term=Mount+Isa",
+    "extracted_date": "2025-11-14T20:52:02.293587",
+    "note": "Requires HTML scraping or data download"
+  },
+  {
+    "source": "grantconnect",
+    "record_type": "federal_grant",
+    "description": "Federal grants search: Mithangkaya Nguli",
+    "url": "https://www.grants.gov.au/?event=public.search&term=Mithangkaya+Nguli",
+    "extracted_date": "2025-11-14T20:52:02.293597",
+    "note": "Requires HTML scraping or data download"
+  },
+  {
+    "source": "grantconnect",
+    "record_type": "federal_grant",
+    "description": "Federal grants search: North West Queensland",
+    "url": "https://www.grants.gov.au/?event=public.search&term=North+West+Queensland",
+    "extracted_date": "2025-11-14T20:52:02.293613",
+    "note": "Requires HTML scraping or data download"
+  },
+  {
+    "source": "grantconnect",
+    "record_type": "federal_program",
+    "program_name": "Indigenous Advancement Strategy",
+    "funding_body": "NIAA",
+    "url": "https://www.niaa.gov.au/indigenous-affairs/grants-and-funding",
+    "extracted_date": "2025-11-14T20:52:02.293615",
+    "mount_isa_relevance": "Medium",
+    "note": "May have Mount Isa recipients - requires detailed search"
+  },
+  {
+    "source": "grantconnect",
+    "record_type": "federal_program",
+    "program_name": "Safer Communities Fund",
+    "funding_body": "Department of Home Affairs",
+    "url": "https://www.homeaffairs.gov.au/about-us/grants-and-tenders/grants",
+    "extracted_date": "2025-11-14T20:52:02.293617",
+    "mount_isa_relevance": "Medium"
+  },
+  {
+    "source": "council_budget",
+    "record_type": "council_document",
+    "description": "Total council budget 2024-25",
+    "url": "https://www.mountisa.qld.gov.au/City-Council/Corporate-Publications/Budgets/Budget-2024-25",
+    "amount": "$110.9 million",
+    "extracted_date": "2025-11-14T20:52:02.293649",
+    "mount_isa_relevance": "High",
+    "note": "Requires PDF/HTML download and parsing"
+  },
+  {
+    "source": "council_budget",
+    "record_type": "council_document",
+    "description": "Mount Isa Youth Strategy - contains youth program priorities",
+    "url": "https://issuu.com/mountisa7/docs/atria_group_mount_isa_city_council_youth_strategy_",
+    "amount": null,
+    "extracted_date": "2025-11-14T20:52:02.293657",
+    "mount_isa_relevance": "High",
+    "note": "Requires PDF/HTML download and parsing"
+  },
+  {
+    "source": "council_budget",
+    "record_type": "council_document",
+    "description": "Council annual report with program outcomes",
+    "url": "https://www.mountisa.qld.gov.au/City-Council/Corporate-Publications/",
+    "amount": null,
+    "extracted_date": "2025-11-14T20:52:02.293663",
+    "mount_isa_relevance": "High",
+    "note": "Requires PDF/HTML download and parsing"
+  }
+]
