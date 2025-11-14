@@ -60,28 +60,38 @@ def fetch_statement(statement_id: str) -> dict:
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Extract title
-        title_elem = soup.find(['h1', 'h2'])
-        title = title_elem.get_text(strip=True) if title_elem else "Unknown"
+        # Look for JSON-LD structured data (this is where the real content is!)
+        json_ld = soup.find('script', type='application/ld+json')
 
-        # Extract date
-        date_elem = soup.find('time')
-        if not date_elem:
-            date_elem = soup.find(text=re.compile(r'\d{1,2}\s+\w+\s+\d{4}'))
-        date = date_elem.get('datetime', date_elem.get_text(strip=True)) if date_elem else None
+        title = "Unknown"
+        date = None
+        full_text = ""
 
-        # Extract minister
-        minister = None
-        minister_elem = soup.find(text=re.compile(r'Minister|Premier', re.I))
-        if minister_elem:
-            minister = minister_elem.strip()
+        if json_ld:
+            import json
+            try:
+                data = json.loads(json_ld.string)
+                title = data.get('headline', data.get('name', 'Unknown'))
+                date = data.get('datePublished', data.get('dateCreated'))
 
-        # Extract full content
-        content_div = soup.find(['article', 'div'], class_=re.compile(r'content|body|statement', re.I))
-        if not content_div:
-            content_div = soup.find('main')
+                # Get article body (contains HTML tags, need to clean)
+                article_body = data.get('articleBody', '')
+                # Remove HTML tags
+                article_soup = BeautifulSoup(article_body, 'html.parser')
+                full_text = article_soup.get_text(separator=' ', strip=True)
 
-        full_text = content_div.get_text(separator=' ', strip=True) if content_div else soup.get_text(separator=' ', strip=True)
+            except:
+                pass
+
+        # Fallback to regular HTML parsing if JSON-LD fails
+        if not full_text:
+            title_elem = soup.find(['h1', 'h2'])
+            title = title_elem.get_text(strip=True) if title_elem else "Unknown"
+
+            content_div = soup.find(['article', 'div'], class_=re.compile(r'content|body|statement', re.I))
+            if not content_div:
+                content_div = soup.find('main')
+            full_text = content_div.get_text(separator=' ', strip=True) if content_div else soup.get_text(separator=' ', strip=True)
 
         # Extract all dollar amounts
         amounts = re.findall(r'\$[\d,]+(?:\.\d+)?\s*(?:million|billion|M|B)?', full_text, re.IGNORECASE)
@@ -116,11 +126,10 @@ def fetch_statement(statement_id: str) -> dict:
             'url': url,
             'title': title,
             'date': date,
-            'minister': minister,
-            'full_text': full_text[:2000],  # First 2000 chars
+            'full_text': full_text,
             'amounts_mentioned': amounts,
             'programs_mentioned': list(set(programs)),
-            'mount_isa_context': mount_isa_context[:3],  # Top 3 mentions
+            'mount_isa_context': mount_isa_context[:5],  # Top 5 mentions
             'scraped_date': datetime.now().isoformat()
         }
 
@@ -172,14 +181,39 @@ if len(successful) > 0:
         print(f"   Date: {row.get('date', 'Unknown')}")
         print(f"   URL: {row['url']}")
 
-        if row.get('amounts_mentioned') and len(row['amounts_mentioned']) > 0:
-            print(f"   💰 Amounts: {', '.join(row['amounts_mentioned'][:5])}")
+        # Parse amounts_mentioned which might be a string representation of a list
+        amounts = row.get('amounts_mentioned', [])
+        if isinstance(amounts, str):
+            import ast
+            try:
+                amounts = ast.literal_eval(amounts)
+            except:
+                amounts = []
 
-        if row.get('programs_mentioned') and len(row['programs_mentioned']) > 0:
-            print(f"   🎯 Programs: {', '.join(set(row['programs_mentioned'][:5]))}")
+        if amounts and len(amounts) > 0:
+            print(f"   💰 Amounts: {', '.join(amounts[:5])}")
 
-        if row.get('mount_isa_context') and len(row['mount_isa_context']) > 0:
-            print(f"   📝 Context: {row['mount_isa_context'][0][:150]}...")
+        # Parse programs_mentioned
+        programs = row.get('programs_mentioned', [])
+        if isinstance(programs, str):
+            try:
+                programs = ast.literal_eval(programs)
+            except:
+                programs = []
+
+        if programs and len(programs) > 0:
+            print(f"   🎯 Programs: {', '.join(set(programs[:5]))}")
+
+        # Parse mount_isa_context
+        context = row.get('mount_isa_context', [])
+        if isinstance(context, str):
+            try:
+                context = ast.literal_eval(context)
+            except:
+                context = []
+
+        if context and len(context) > 0:
+            print(f"   📝 Context: {context[0][:150]}...")
 
         print()
 
