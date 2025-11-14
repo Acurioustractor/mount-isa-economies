@@ -1,23 +1,64 @@
-# macOS
+# Environment variables (contains secrets)
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
-.AppleDouble
-.LSOverride
+Thumbs.db
 
-# Thumbnails
-._*
+# Data files (too large for git)
+*.csv
+*.json
+*.xlsx
+*.pdf
+data/raw/
+data/processed/
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
+# Logs
+*.log
+logs/
 
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups
+*.backup
+*.bak
+*.old
