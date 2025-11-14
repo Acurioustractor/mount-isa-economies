@@ -226,7 +226,7 @@ else:
 
     all_contracts = []
 
-    for dataset in contracts_datasets[:3]:  # Limit to first 3 datasets
+    for dataset in contracts_datasets[:10]:  # Download from first 10 datasets
         print(f"Processing: {dataset['title']}")
 
         try:
@@ -245,7 +245,12 @@ else:
 
         print()
 
-    # Similar processing as above...
+    # Save all downloaded contracts
+    if all_contracts:
+        combined_df = pd.concat(all_contracts, ignore_index=True)
+        output_file = DATA_DIR / f'qld_all_contracts_{datetime.now().strftime("%Y%m%d")}.csv'
+        combined_df.to_csv(output_file, index=False)
+        print(f"💾 Saved {len(combined_df):,} contracts: {output_file}\n")
 
 print("="*80)
 print("✅ QLD CONTRACTS SCRAPE COMPLETE")
