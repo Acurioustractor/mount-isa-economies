@@ -65,6 +65,24 @@ fi
 echo ""
 
 echo "================================================================================"
+echo "📋 RECOMMENDED CREDENTIALS (for robust scraping)"
+echo "================================================================================"
+echo ""
+
+# Recommended: Firecrawl
+if [ -z "$FIRECRAWL_API_KEY" ] || [ "$FIRECRAWL_API_KEY" == "your_firecrawl_api_key_here" ]; then
+    echo "⚠️  FIRECRAWL_API_KEY: Not set"
+    echo "   Used for: Bypassing 403 blocks, scraping blocked government sites"
+    echo "   Get from: https://firecrawl.dev/ (500 free credits/month)"
+    echo "   Why: Queensland Gov sites blocked simple scrapers - Firecrawl fixes this"
+    WARNINGS=$((WARNINGS+1))
+else
+    echo "✅ FIRECRAWL_API_KEY: Set (${FIRECRAWL_API_KEY:0:20}...)"
+fi
+
+echo ""
+
+echo "================================================================================"
 echo "📋 OPTIONAL CREDENTIALS (for AI chat features)"
 echo "================================================================================"
 echo ""

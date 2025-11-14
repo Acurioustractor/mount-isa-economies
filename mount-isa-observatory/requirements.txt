@@ -16,6 +16,7 @@ ckanapi>=4.7  # For Queensland Open Data
 zeep>=4.2.0  # For ABN Lookup SOAP/REST
 beautifulsoup4>=4.12.0  # For web scraping
 scrapy>=2.11.0
+firecrawl-py>=0.0.16  # For bypassing 403 blocks, JavaScript rendering
 
 # Data Validation & Quality
 great-expectations>=0.18.0

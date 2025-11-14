@@ -75,7 +75,63 @@
 
 ---
 
-### 3. Database Password (Optional - Only if NOT using Supabase)
+### 3. Firecrawl API Key (Recommended - Bypasses 403 Blocks)
+
+**What it's for**: Advanced web scraping that bypasses anti-bot measures
+**Used by**: Media statements scraper, any blocked government sites
+
+**Why you need this**:
+- Queensland Gov sites return 403 Forbidden with simple requests
+- Firecrawl handles JavaScript rendering, CAPTCHAs, and anti-bot blocks
+- More reliable than user-agent spoofing or proxies
+
+**You need**:
+
+**FIRECRAWL_API_KEY**
+- Format: `fc-...` (starts with `fc-`)
+- Location: https://firecrawl.dev/
+- Cost: **FREE tier** - 500 credits/month, then $0.50 per 1,000 credits
+
+**How to create**:
+```bash
+# 1. Go to: https://firecrawl.dev/
+# 2. Sign up (GitHub login works)
+# 3. Get API key from dashboard
+# 4. Add to .env: FIRECRAWL_API_KEY=fc-your_key_here
+```
+
+**Installation**:
+```bash
+pip install firecrawl-py
+```
+
+**Test it works**:
+```bash
+python scrapers/mount_isa_media_statements_firecrawl.py
+```
+
+**Pricing Breakdown**:
+- **Free tier**: 500 credits/month (enough for 500 pages)
+- **Paid**: $25/month for 50,000 credits
+- **One page scrape**: 1 credit
+- **Structured extraction**: 2 credits
+
+**Cost estimate for Mount Isa project**:
+- Scraping 10 media statements: 10 credits
+- With structured extraction: 20 credits
+- Monthly scraping: ~100 credits
+- **Fits easily in free tier! 🎉**
+
+**When to use**:
+- ✅ Queensland Government sites (403 blocks)
+- ✅ JavaScript-heavy sites
+- ✅ Sites with CAPTCHAs
+- ✅ When simple requests fail
+- ❌ When simple requests work (save credits)
+
+---
+
+### 4. Database Password (Optional - Only if NOT using Supabase)
 
 **What it's for**: Local PostgreSQL database (alternative to Supabase)
 
