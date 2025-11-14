@@ -99,7 +99,17 @@ class FirecrawlScraper:
                 only_main_content=only_main_content
             )
 
-            print(f"✅ Scraped successfully: {result.get('metadata', {}).get('title', 'Unknown')}")
+            # Convert Document object to dict
+            if hasattr(result, '__dict__'):
+                result_dict = {
+                    'markdown': getattr(result, 'markdown', ''),
+                    'html': getattr(result, 'html', ''),
+                    'metadata': getattr(result, 'metadata', {}),
+                    'raw_html': getattr(result, 'raw_html', ''),
+                }
+                print(f"✅ Scraped successfully: {result_dict.get('metadata', {}).get('title', 'Unknown')}")
+                return result_dict
+
             return result
 
         except Exception as e:
@@ -145,6 +155,15 @@ class FirecrawlScraper:
                 kwargs['prompt'] = prompt
 
             result = self.app.extract(url, **kwargs)
+
+            # Convert Document/result to dict if needed
+            if hasattr(result, '__dict__'):
+                result_dict = {key: getattr(result, key) for key in dir(result) if not key.startswith('_')}
+                print(f"✅ Extracted: {result_dict}")
+                return result_dict
+            elif hasattr(result, 'data'):
+                print(f"✅ Extracted: {result.data}")
+                return result.data
 
             print(f"✅ Extracted: {result}")
             return result
