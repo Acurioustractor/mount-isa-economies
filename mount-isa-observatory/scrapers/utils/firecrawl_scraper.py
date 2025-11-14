@@ -92,7 +92,8 @@ class FirecrawlScraper:
         print(f"🔥 Firecrawl: Scraping {url}")
 
         try:
-            result = self.app.scrape_url(
+            # Try new API method name first
+            result = self.app.scrape(
                 url,
                 params={
                     'formats': formats,
@@ -144,7 +145,8 @@ class FirecrawlScraper:
             if prompt:
                 params['prompt'] = prompt
 
-            result = self.app.extract_url(url, params=params)
+            # Try new API method name
+            result = self.app.extract(url, params=params)
 
             print(f"✅ Extracted: {result}")
             return result
