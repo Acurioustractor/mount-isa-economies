@@ -101,13 +101,25 @@ class FirecrawlScraper:
 
             # Convert Document object to dict
             if hasattr(result, '__dict__'):
+                # Handle metadata object
+                metadata = getattr(result, 'metadata', {})
+                if hasattr(metadata, '__dict__'):
+                    metadata_dict = {
+                        'title': getattr(metadata, 'title', ''),
+                        'description': getattr(metadata, 'description', ''),
+                        'language': getattr(metadata, 'language', ''),
+                        'url': getattr(metadata, 'url', ''),
+                    }
+                else:
+                    metadata_dict = metadata
+
                 result_dict = {
                     'markdown': getattr(result, 'markdown', ''),
                     'html': getattr(result, 'html', ''),
-                    'metadata': getattr(result, 'metadata', {}),
+                    'metadata': metadata_dict,
                     'raw_html': getattr(result, 'raw_html', ''),
                 }
-                print(f"✅ Scraped successfully: {result_dict.get('metadata', {}).get('title', 'Unknown')}")
+                print(f"✅ Scraped successfully: {metadata_dict.get('title', 'Unknown')}")
                 return result_dict
 
             return result
