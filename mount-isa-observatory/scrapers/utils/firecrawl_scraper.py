@@ -92,13 +92,11 @@ class FirecrawlScraper:
         print(f"🔥 Firecrawl: Scraping {url}")
 
         try:
-            # Try new API method name first
+            # Firecrawl API: pass parameters as direct kwargs
             result = self.app.scrape(
                 url,
-                params={
-                    'formats': formats,
-                    'onlyMainContent': only_main_content
-                }
+                formats=formats,
+                only_main_content=only_main_content
             )
 
             print(f"✅ Scraped successfully: {result.get('metadata', {}).get('title', 'Unknown')}")
@@ -141,12 +139,12 @@ class FirecrawlScraper:
         print(f"🔥 Firecrawl: Extracting structured data from {url}")
 
         try:
-            params = {'schema': schema}
+            # Firecrawl API: pass parameters as direct kwargs
+            kwargs = {'schema': schema}
             if prompt:
-                params['prompt'] = prompt
+                kwargs['prompt'] = prompt
 
-            # Try new API method name
-            result = self.app.extract(url, params=params)
+            result = self.app.extract(url, **kwargs)
 
             print(f"✅ Extracted: {result}")
             return result
