@@ -76,46 +76,56 @@ def scrape_media_statements():
         print(f"\nScraping: {statement['title']} ({statement_id})")
 
         try:
-            # Scrape with Firecrawl
+            # Scrape with Firecrawl (bypasses 403 blocks!)
             result = scraper.scrape_url(url)
 
             # Extract content
             markdown = result.get('markdown', '')
             metadata = result.get('metadata', {})
 
-            # Extract structured data
-            structured = scraper.extract_structured(
-                url=url,
-                schema={
-                    'title': 'string',
-                    'date': 'string',
-                    'minister': 'string',
-                    'funding_amount': 'string',
-                    'recipient_organization': 'string',
-                    'program_name': 'string',
-                    'key_points': 'array of strings'
-                },
-                prompt='Extract funding details, amounts, recipients, and key points from this Queensland Government ministerial media statement about Mount Isa programs.'
-            )
+            # Simple regex extraction from markdown
+            import re
+
+            # Extract dollar amounts
+            amounts = re.findall(r'\$[\d,]+(?:\.\d+)?\s*(?:million|billion|M|B)?', markdown, re.IGNORECASE)
+            funding_amount = ', '.join(amounts[:3]) if amounts else ''  # First 3 amounts
+
+            # Extract common Mount Isa program keywords
+            programs = []
+            program_keywords = ['On-Country', 'Co-responder', 'Stronger Communities', 'PCYC',
+                              'Community Connect', 'Youth Justice', 'Diversionary']
+            for keyword in program_keywords:
+                if keyword.lower() in markdown.lower():
+                    programs.append(keyword)
+            program_name = ', '.join(programs) if programs else ''
+
+            # Extract organization mentions
+            orgs = []
+            if 'Mithangkaya Nguli' in markdown:
+                orgs.append('Mithangkaya Nguli')
+            if 'Young People Ahead' in markdown:
+                orgs.append('Young People Ahead')
+            recipient = ', '.join(orgs) if orgs else ''
 
             # Store result
             results.append({
                 'statement_id': statement_id,
                 'url': url,
-                'title': structured.get('title') or metadata.get('title'),
-                'date': structured.get('date') or statement['date'],
-                'minister': structured.get('minister'),
-                'funding_amount': structured.get('funding_amount'),
-                'recipient': structured.get('recipient_organization'),
-                'program': structured.get('program_name'),
-                'key_points': ', '.join(structured.get('key_points', [])) if structured.get('key_points') else '',
+                'title': metadata.get('title', statement['title']),
+                'date': statement['date'],
+                'funding_amount': funding_amount,
+                'recipient': recipient,
+                'program': program_name,
                 'content_preview': markdown[:500],
+                'full_content': markdown,
                 'scraped_at': datetime.now().isoformat()
             })
 
-            print(f"✅ Success: {structured.get('title')}")
-            print(f"   Amount: {structured.get('funding_amount')}")
-            print(f"   Recipient: {structured.get('recipient_organization')}")
+            print(f"✅ Success: {metadata.get('title')}")
+            if funding_amount:
+                print(f"   Amounts: {funding_amount}")
+            if recipient:
+                print(f"   Recipient: {recipient}")
 
         except Exception as e:
             print(f"❌ Error scraping {statement_id}: {e}")
