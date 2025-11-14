@@ -1,0 +1,49 @@
+================================================================================
+MOUNT ISA CONTRACTS FOUND (6 contracts, $261,009 total)
+================================================================================
+
+1. Meteor Car & Truck Rentals
+   Address: 3 Killara Cres, Kalkadoon, QLD 4825
+   Service: MV Hire
+   Value: $11,943.75
+   Date: 18/08/2023
+   Agency: DYJESBT
+
+2. New Nation Enterprise
+   Address: 10 Diane St, Townview QLD 4825
+   Service: Program Support
+   Value: $13,860.00
+   Date: 26/10/2023
+   Agency: DYJESBT
+
+3. CNW PTY LTD
+   Address: 67-69 WEST ST MOUNT ISA, QLD 4825
+   Service: ELECTRICAL EQUIPMENT (QFES)
+   Value: $32,111.92
+   Date: 31/07/2021
+   Agency: QFES
+
+4. CNW PTY LTD
+   Address: 67-69 WEST ST MOUNT ISA QLD 4825
+   Service: ELECTRICAL EQUIPMENT (QFES)
+   Value: $13,998.79
+   Date: 31/03/2022
+   Agency: QFES
+
+5. HGW Consulting
+   Address: Sheldon Queensland 4157
+   Service: Governance Advisor for Mount Isa City Council
+   Value: $139,095
+   Date: 11/10/2022
+   Agency: DSDILGP
+
+6. HGW Consulting (Variation)
+   Address: Sheldon Queensland 4157
+   Service: Governance Advisor for Mount Isa City Council
+   Value: $50,000
+   Date: 20/12/2022
+   Agency: DSDILGP
+
+================================================================================
+NEXT: Look up ABNs for these suppliers
+================================================================================
