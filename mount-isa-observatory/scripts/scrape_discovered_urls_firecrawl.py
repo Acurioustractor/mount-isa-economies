@@ -55,7 +55,10 @@ class FirecrawlURLScraper:
 
     def load_urls(self) -> List[str]:
         """Load URLs from file"""
-        urls_file = self.output_dir / 'urls_to_scrape.txt'
+        # Try master list first, then fall back to original
+        urls_file = self.output_dir / 'urls_master_list.txt'
+        if not urls_file.exists():
+            urls_file = self.output_dir / 'urls_to_scrape.txt'
 
         if not urls_file.exists():
             print(f"\n❌ File not found: {urls_file}")
@@ -65,7 +68,7 @@ class FirecrawlURLScraper:
         with open(urls_file, 'r') as f:
             urls = [line.strip() for line in f if line.strip() and 'statements.qld.gov.au' in line]
 
-        print(f"\n✅ Loaded {len(urls)} URLs to scrape")
+        print(f"\n✅ Loaded {len(urls)} URLs from {urls_file.name}")
         return urls
 
     def scrape_statement(self, url: str) -> Optional[Dict]:
