@@ -234,8 +234,8 @@ class TemporalAnalyzer:
         print("  (Requires election date data to analyze)")
         print("  TODO: Add election dates to detect pre-election funding spikes")
 
-        patterns['peak_announcement_month'] = df.groupby('month').size().idxmax()
-        patterns['peak_announcement_quarter'] = df.groupby('quarter').size().idxmax()
+        patterns['peak_announcement_month'] = int(df.groupby('month').size().idxmax())
+        patterns['peak_announcement_quarter'] = int(df.groupby('quarter').size().idxmax())
 
         # Save patterns
         patterns_file = self.output_dir / 'seasonal_patterns.json'
