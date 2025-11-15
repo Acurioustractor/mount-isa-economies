@@ -111,7 +111,9 @@ class EnhancedDataCleaner:
                 current_date = doc.get('published_date')
                 if date and date_conf and date_conf >= 0.7:
                     # Check if current date is today (likely wrong)
-                    is_today = current_date == datetime.now().date() if current_date else False
+                    # Convert to string for comparison since DB returns string
+                    today_str = datetime.now().strftime('%Y-%m-%d')
+                    is_today = str(current_date) == today_str if current_date else False
 
                     if is_today or not current_date:
                         updates['published_date'] = date.strftime('%Y-%m-%d')
