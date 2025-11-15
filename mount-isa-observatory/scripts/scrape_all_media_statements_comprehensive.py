@@ -160,7 +160,7 @@ class ComprehensiveMediaScraper:
         print("\n📈 COVERAGE ANALYSIS:")
 
         # Date range
-        df['date'] = pd.to_datetime(df['date'])
+        df['date'] = pd.to_datetime(df['date'], format='mixed', errors='coerce')
         date_range = (df['date'].max() - df['date'].min()).days
         print(f"\n📅 Date range: {df['date'].min().date()} to {df['date'].max().date()}")
         print(f"   Span: {date_range} days ({date_range/365:.1f} years)")
