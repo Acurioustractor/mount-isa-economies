@@ -18,7 +18,8 @@ from dotenv import load_dotenv
 from supabase import create_client, Client
 
 # Add scripts directory to path to import extractors
-sys.path.insert(0, str(Path(__file__).parent.parent / 'scripts'))
+# Go up 3 levels: cleanup_and_reprocess.py -> scripts/ -> mount-isa-observatory/ -> mount-isa/ (repo root)
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from date_extractor import extract_date
 from funding_extractor import extract_funding_amount
