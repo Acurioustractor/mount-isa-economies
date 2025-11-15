@@ -166,12 +166,16 @@ def load_funding_to_database():
         print(f"\n📄 {item['title']}")
         print(f"   Amount: ${item['funding_amount_extracted']:,.0f}")
 
-        # Build document for Supabase
+        # Build document for Supabase (using YOUR actual schema)
+        # Store program_name and recipient in summary field
+        summary = f"{item.get('program_name', '')} - {item.get('recipient', '')}".strip(' -')
+
         document = {
             'url': item['url'],
             'statement_id': item.get('statement_id'),
             'title': item['title'],
             'full_text': item.get('full_text', ''),
+            'summary': summary,  # Store program and recipient here
             'published_date': item['published_date'],
             'published_date_confidence': item['published_date_confidence'],
             'published_date_extraction_method': 'manual_verified',
@@ -181,8 +185,6 @@ def load_funding_to_database():
             'locations_mentioned': item.get('locations_mentioned', []),
             'location_confidence': 0.95,
             'lga_code': item.get('lga_code'),
-            'recipient': item.get('recipient'),
-            'program_name': item.get('program_name'),
             'categories': item.get('categories', []),
             'source_type': item.get('source_type'),
             'source_organization': item.get('source_organization'),
