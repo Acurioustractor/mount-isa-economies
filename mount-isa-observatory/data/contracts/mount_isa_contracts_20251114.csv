@@ -1,0 +1,8 @@
+suppliername,agencyname,contract_value,description,supplier_name_original,abn,acn,company_name,match_method
+MOUNT ISA WATER BOARD,Mount Isa City Council,450000,Water infrastructure maintenance,MOUNT ISA WATER BOARD,,,,
+GLENCORE MOUNT ISA MINES,Department of Employment,180000,Training programs,GLENCORE MOUNT ISA MINES,,,,
+MOUNT ISA HIRE & SALES,Mount Isa City Council,42000,Equipment rental,MOUNT ISA HIRE & SALES,,,,
+MOUNT ISA ABORIGINAL CORPORATION,Indigenous Affairs,78000,Community programs,MOUNT ISA ABORIGINAL CORPORATION,,,,
+MOUNT ISA TAXIS,Department of Transport,28000,Transport services,MOUNT ISA TAXIS,,,,
+MOUNT ISA COMMUNITY ENTERPRISES,Local Government,56000,Community services,MOUNT ISA COMMUNITY ENTERPRISES,,,,
+KALKADOON ENTERPRISES PTY LTD ACN 123456789,Indigenous Affairs,95000,Community services,KALKADOON ENTERPRISES PTY LTD ACN 123456789,,123456789,,extracted_from_name

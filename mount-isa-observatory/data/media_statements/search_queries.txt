@@ -1,0 +1,31 @@
+site:statements.qld.gov.au "youth justice" "million"
+site:statements.qld.gov.au "youth justice" "funding"
+site:statements.qld.gov.au "youth justice" "investment"
+site:statements.qld.gov.au "youth justice" "budget"
+site:statements.qld.gov.au "young people" "million"
+site:statements.qld.gov.au "young people" "funding"
+site:statements.qld.gov.au "young people" "investment"
+site:statements.qld.gov.au "young people" "budget"
+site:statements.qld.gov.au "juvenile" "million"
+site:statements.qld.gov.au "juvenile" "funding"
+site:statements.qld.gov.au "juvenile" "investment"
+site:statements.qld.gov.au "juvenile" "budget"
+site:statements.qld.gov.au "on-country" "million"
+site:statements.qld.gov.au "on-country" "funding"
+site:statements.qld.gov.au "on-country" "investment"
+site:statements.qld.gov.au "on-country" "budget"
+site:statements.qld.gov.au "co-responder" "million"
+site:statements.qld.gov.au "co-responder" "funding"
+site:statements.qld.gov.au "co-responder" "investment"
+site:statements.qld.gov.au "co-responder" "budget"
+site:statements.qld.gov.au "diversion" "million"
+site:statements.qld.gov.au "diversion" "funding"
+site:statements.qld.gov.au "diversion" "investment"
+site:statements.qld.gov.au "diversion" "budget"
+site:statements.qld.gov.au "Mount Isa" youth funding
+site:statements.qld.gov.au "Doomadgee" youth funding
+site:statements.qld.gov.au "Mornington Island" youth funding
+site:statements.qld.gov.au "Palm Island" youth funding
+site:statements.qld.gov.au "Aurukun" youth funding
+site:statements.qld.gov.au "Yarrabah" youth funding
+site:statements.qld.gov.au "Townsville" youth funding
