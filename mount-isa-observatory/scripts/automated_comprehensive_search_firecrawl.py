@@ -111,9 +111,9 @@ class FirecrawlComprehensiveSearch:
 
         return queries
 
-    def search_with_google(self, query: str) -> List[str]:
+    def search_with_firecrawl(self, query: str) -> List[str]:
         """
-        Execute a Google search and extract URLs
+        Execute a search using Firecrawl's search API
 
         Args:
             query: Search query
@@ -122,28 +122,20 @@ class FirecrawlComprehensiveSearch:
             List of URLs found
         """
         try:
-            # Use Firecrawl to scrape Google search results
-            search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
-
             print(f"  Searching: {query[:60]}...")
 
-            # Scrape search results page
-            result = self.firecrawl.scrape_url(
-                search_url,
-                params={
-                    'formats': ['markdown'],
-                    'onlyMainContent': False
-                }
+            # Use Firecrawl search API
+            result = self.firecrawl.search(
+                query,
+                limit=10  # Get top 10 results per query
             )
 
-            # Extract URLs from markdown
-            markdown = result.get('markdown', '')
-
-            # Find all statements.qld.gov.au URLs
-            urls = re.findall(r'https?://statements\.qld\.gov\.au[^\s\)]+', markdown)
-
-            # Clean URLs (remove trailing punctuation)
-            urls = [url.rstrip('.,;)') for url in urls]
+            # Extract URLs from search results
+            urls = []
+            if hasattr(result, 'data'):
+                for item in result.data:
+                    if hasattr(item, 'url') and 'statements.qld.gov.au' in item.url:
+                        urls.append(item.url)
 
             # Deduplicate
             urls = list(set(urls))
@@ -183,7 +175,7 @@ class FirecrawlComprehensiveSearch:
         for i, query in enumerate(queries, 1):
             print(f"\n[{i}/{len(queries)}]", end=" ")
 
-            urls = self.search_with_google(query)
+            urls = self.search_with_firecrawl(query)
             all_urls.update(urls)
 
             print(f"  Total unique URLs so far: {len(all_urls)}")
@@ -215,16 +207,15 @@ class FirecrawlComprehensiveSearch:
         """
         try:
             # Scrape with Firecrawl
-            result = self.firecrawl.scrape_url(
+            result = self.firecrawl.scrape(
                 url,
-                params={
-                    'formats': ['markdown'],
-                    'onlyMainContent': True
-                }
+                formats=['markdown'],
+                only_main_content=True
             )
 
-            markdown = result.get('markdown', '')
-            metadata = result.get('metadata', {})
+            # Extract data from Document object
+            markdown = getattr(result, 'markdown', '') or ''
+            metadata = getattr(result, 'metadata', {}) or {}
 
             # Extract title
             title = metadata.get('title', '') or metadata.get('ogTitle', '')
