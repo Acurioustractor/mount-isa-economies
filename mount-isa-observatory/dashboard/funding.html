@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queensland Youth Justice Funding Analysis | Mount Isa Observatory</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .header .tagline {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .mega-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: -3rem auto 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .mega-stat {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mega-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .mega-stat:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .mega-stat .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mega-stat .number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0.5rem 0;
+            line-height: 1;
+        }
+
+        .mega-stat .label {
+            color: #718096;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mega-stat .sublabel {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: #2d3748;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-header .icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 500px;
+            margin: 2rem 0;
+        }
+
+        .chart-container.tall {
+            height: 700px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+        }
+
+        .ranking-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .ranking-table th {
+            padding: 1.25rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .ranking-table th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .ranking-table th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .ranking-table tbody tr {
+            transition: all 0.2s;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .ranking-table tbody tr:hover {
+            background: #f7fafc;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .ranking-table td {
+            padding: 1.25rem 1rem;
+            color: #2d3748;
+        }
+
+        .ranking-table .rank {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            width: 60px;
+        }
+
+        .ranking-table .rank-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ranking-table .community-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .ranking-table .mount-isa {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            font-weight: 700;
+        }
+
+        .ranking-table .amount {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #48bb78;
+        }
+
+        .ranking-table .programs {
+            color: #718096;
+        }
+
+        .ranking-table .per-capita {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            margin: 2rem 0;
+        }
+
+        .insight-box h3 {
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .insight-box p {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .insight-box ul {
+            margin-top: 1rem;
+            margin-left: 1.5rem;
+        }
+
+        .insight-box li {
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #4a5568;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .legend {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .mega-stats {
+                grid-template-columns: 1fr;
+                margin-top: -2rem;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 400px;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .ranking-table {
+                font-size: 0.85rem;
+            }
+
+            .ranking-table th,
+            .ranking-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .badge-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #744210;
+        }
+
+        .badge-highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-chart-bar"></i> Queensland Youth Justice Funding Analysis</h1>
+        <p>Tracking $202.7M Across 9 Communities</p>
+        <div class="tagline">Data-driven insights for community economic intelligence • Mount Isa Economic Observatory</div>
+    </div>
+
+    <div class="mega-stats">
+        <div class="mega-stat">
+            <div class="icon"><i class="fas fa-hand-holding-usd"></i></div>
+            <div class="number">$202.7M</div>
+            <div class="label">Total Funding Tracked</div>
+            <div class="sublabel">Across 9 Queensland communities</div>
+        </div>
+        <div class="mega-stat">
+            <div class="icon"><i class="fas fa-map-marked-alt"></i></div>
+            <div class="number">9</div>
+            <div class="label">Communities</div>
+            <div class="sublabel">Regional & metropolitan areas</div>
+        </div>
+        <div class="mega-stat">
+            <div class="icon"><i class="fas fa-project-diagram"></i></div>
+            <div class="number">27+</div>
+            <div class="label">Programs</div>
+            <div class="sublabel">Youth justice initiatives</div>
+        </div>
+        <div class="mega-stat">
+            <div class="icon"><i class="fas fa-trophy"></i></div>
+            <div class="number">$53.4M</div>
+            <div class="label">Mount Isa Leading</div>
+            <div class="sublabel">Highest total funding</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Rankings Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-trophy icon"></i> Community Funding Rankings</h2>
+            </div>
+
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Community</th>
+                        <th>Total Funding</th>
+                        <th>Programs</th>
+                        <th>Per Capita</th>
+                        <th>Population</th>
+                    </tr>
+                </thead>
+                <tbody id="ranking-tbody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+
+            <div class="insight-box">
+                <h3><i class="fas fa-lightbulb"></i> Key Insight: Mount Isa Leads</h3>
+                <p><strong>Mount Isa has secured $53.38M</strong> - the highest absolute funding of any Queensland community for youth justice programs. This represents:</p>
+                <ul>
+                    <li><strong>$2,885 per person</strong> - 64× higher than Gold Coast ($45/person)</li>
+                    <li><strong>26% of total tracked funding</strong> across all 9 communities</li>
+                    <li><strong>7 diverse programs</strong> including $24M On-Country and $20M Co-Responder</li>
+                    <li><strong>Potential $26.75M annual economic impact</strong> if funds circulate locally (LM3 multiplier)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid-2">
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar icon"></i> Total Funding</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="fundingBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-pie icon"></i> Funding Share</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="fundingPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Per Capita Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-users icon"></i> Per Capita Funding Analysis</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="perCapitaChart"></canvas>
+            </div>
+
+            <div class="insight-box">
+                <h3><i class="fas fa-chart-line"></i> Per Capita Leaders</h3>
+                <p>On a per-person basis, <strong>Mount Isa ranks #2</strong> with $2,885 per capita:</p>
+                <ul>
+                    <li><strong>Palm Island: $1,114/person</strong> - Small population (2,455), targeted programs</li>
+                    <li><strong>Mount Isa: $2,885/person</strong> - Regional hub with exceptional on-country focus</li>
+                    <li><strong>Torres Strait: $837/person</strong> - Remote Indigenous community support</li>
+                    <li><strong>Rockhampton: $225/person</strong> - Regional city investment</li>
+                </ul>
+                <p style="margin-top: 1rem;">Remote and regional communities receive higher per-capita funding to account for service delivery costs and infrastructure gaps.</p>
+            </div>
+        </div>
+
+        <!-- Mount Isa Deep Dive -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-mountain icon"></i> Mount Isa Funding Breakdown</h2>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <div class="chart-container">
+                        <canvas id="mountIsaBreakdownChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: #2d3748;">Program Portfolio</h3>
+                    <table class="ranking-table">
+                        <thead>
+                            <tr>
+                                <th>Program</th>
+                                <th>Amount</th>
+                                <th>% of Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>On-Country Programs</td>
+                                <td class="amount">$26.45M</td>
+                                <td class="per-capita">50%</td>
+                            </tr>
+                            <tr>
+                                <td>Co-Responder Team</td>
+                                <td class="amount">$20M</td>
+                                <td class="per-capita">37%</td>
+                            </tr>
+                            <tr>
+                                <td>Stronger Communities</td>
+                                <td class="amount">$7M</td>
+                                <td class="per-capita">13%</td>
+                            </tr>
+                            <tr>
+                                <td>Community Grants</td>
+                                <td class="amount">$430K</td>
+                                <td class="per-capita">1%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-box" style="margin-top: 1.5rem;">
+                        <h3><i class="fas fa-star"></i> Unique Strategy</h3>
+                        <p>Mount Isa's portfolio shows:</p>
+                        <ul>
+                            <li><strong>50% on cultural healing</strong> - On-country focus</li>
+                            <li><strong>Partnership model</strong> - Police + youth workers</li>
+                            <li><strong>Long-term commitment</strong> - 4-7 year programs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Program Types Across Communities -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-layer-group icon"></i> Program Types Distribution</h2>
+            </div>
+            <div class="chart-container tall">
+                <canvas id="programTypesChart"></canvas>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #667eea;"></div>
+                    <span>Crime Prevention Schools</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #48bb78;"></div>
+                    <span>Youth Justice Schools</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f6ad55;"></div>
+                    <span>Staying on Track</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fc8181;"></div>
+                    <span>On-Country Programs</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9f7aea;"></div>
+                    <span>Regional Reset</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4299e1;"></div>
+                    <span>Kickstarter Grants</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Economic Impact -->
+        <div class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-coins icon"></i> Economic Impact for Mount Isa</h2>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <h3 style="color: #2d3748; margin-bottom: 1.5rem;">If $53.38M is Fully Delivered Over 5 Years:</h3>
+                    <div style="display: grid; gap: 1.5rem;">
+                        <div class="insight-box">
+                            <h3><i class="fas fa-dollar-sign"></i> Direct Investment</h3>
+                            <p><strong>$10.7M per year</strong> flowing into Mount Isa economy</p>
+                        </div>
+                        <div class="insight-box">
+                            <h3><i class="fas fa-briefcase"></i> Jobs Created</h3>
+                            <p><strong>50-80 jobs</strong> (youth workers, coordinators, admin)<br>
+                            Average wage $70K = $3.5M-5.6M in local wages annually</p>
+                        </div>
+                        <div class="insight-box">
+                            <h3><i class="fas fa-sync-alt"></i> Multiplier Effect (LM3 = 2.5)</h3>
+                            <p>$10.7M × 2.5 = <strong>$26.75M total economic activity/year</strong><br>
+                            Workers spend locally → groceries, rent, services<br>
+                            Programs buy locally → venues, catering, transport</p>
+                        </div>
+                        <div class="insight-box">
+                            <h3><i class="fas fa-chart-line"></i> 5-Year Total</h3>
+                            <p><strong>$133.75M total economic impact</strong><br>
+                            Equivalent to <strong>7% of Mount Isa's annual economy</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="chart-container">
+                        <canvas id="economicImpactChart"></canvas>
+                    </div>
+                    <div class="insight-box" style="margin-top: 1rem; background: linear-gradient(135deg, rgba(254, 215, 170, 0.3) 0%, rgba(251, 113, 133, 0.3) 100%); border-left-color: #f56565;">
+                        <h3 style="color: #c53030;"><i class="fas fa-exclamation-triangle"></i> Critical Question</h3>
+                        <p style="color: #742a2a;"><strong>Is this funding actually being delivered?</strong></p>
+                        <ul style="color: #742a2a;">
+                            <li>$24M On-Country (Jan 2024) → Has money reached Mithangkaya Nguli?</li>
+                            <li>$20M Co-Responder (2023) → Is team operational? How many staff?</li>
+                            <li>$7M Stronger Communities (2023-27) → Is $1.75M/year being spent?</li>
+                        </ul>
+                        <p style="color: #742a2a; margin-top: 1rem;"><em>Next step: Verify announced vs delivered funding through FOI requests and community interviews.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Mount Isa Economic Observatory</strong> • Justice-centered economic intelligence for Kalkadoon Country</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Data compiled from Queensland Government media statements and 2025-26 budget papers</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Last updated: November 15, 2025 • <a href="../data/media_statements/ALL_COMMUNITIES_FUNDING_SUMMARY.md">View raw data</a></p>
+    </div>
+
+    <script src="funding-dashboard.js"></script>
+</body>
+</html>
