@@ -608,7 +608,6 @@ COMMENT ON VIEW v_temporal_performance IS 'How long each stage of funding lifecy
 CREATE OR REPLACE VIEW v_geographic_equity_scorecard AS
 SELECT
     l.name as community_name,
-    l.location_type,
     gg.youth_population,
     gg.indigenous_youth_population,
     gg.indigenous_over_representation_factor,
