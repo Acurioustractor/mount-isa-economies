@@ -215,17 +215,27 @@ class FirecrawlComprehensiveSearch:
 
             # Extract data from Document object
             markdown = getattr(result, 'markdown', '') or ''
-            metadata = getattr(result, 'metadata', {}) or {}
+            metadata = getattr(result, 'metadata', None)
 
             # Extract title
-            title = metadata.get('title', '') or metadata.get('ogTitle', '')
+            title = ''
+            if metadata:
+                title = getattr(metadata, 'title', '') or getattr(metadata, 'og_title', '') or ''
 
             # Extract date
-            date = metadata.get('publishedTime', '') or metadata.get('modifiedTime', '')
+            date = ''
+            if metadata:
+                date = getattr(metadata, 'published_time', '') or getattr(metadata, 'modified_time', '') or ''
             if date:
                 date = date[:10]  # YYYY-MM-DD
             else:
-                date = datetime.now().strftime('%Y-%m-%d')
+                # Try to extract from markdown
+                date_match = re.search(r'(\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4})', markdown)
+                if date_match:
+                    from datetime import datetime as dt
+                    date = dt.strptime(date_match.group(1), '%d %B %Y').strftime('%Y-%m-%d')
+                else:
+                    date = datetime.now().strftime('%Y-%m-%d')
 
             # Extract minister from content
             minister = "Queensland Government"
