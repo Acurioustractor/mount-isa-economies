@@ -40,7 +40,6 @@ CO_RESPONDER_PROGRAMS = [
         'categories': ['Community Safety', 'Youth Justice', 'Co-Responder', 'Police'],
         'source_type': 'State Budget',
         'source_organization': 'Queensland Police Service',
-        'notes': 'Funding estimate based on $78.1M program budget divided across 5 locations. Exact per-location allocation not publicly disclosed.'
     },
 
     {
@@ -57,7 +56,6 @@ CO_RESPONDER_PROGRAMS = [
         'categories': ['Community Safety', 'Youth Justice', 'Co-Responder', 'Police'],
         'source_type': 'State Budget',
         'source_organization': 'Queensland Police Service',
-        'notes': 'Funding estimate based on $78.1M program budget divided across 5 locations.'
     },
 
     {
@@ -74,7 +72,6 @@ CO_RESPONDER_PROGRAMS = [
         'categories': ['Community Safety', 'Youth Justice', 'Co-Responder', 'Police'],
         'source_type': 'State Budget',
         'source_organization': 'Queensland Police Service',
-        'notes': 'Funding estimate based on $78.1M program budget divided across 5 locations.'
     },
 
     {
@@ -91,7 +88,6 @@ CO_RESPONDER_PROGRAMS = [
         'categories': ['Community Safety', 'Youth Justice', 'Co-Responder', 'Police'],
         'source_type': 'State Budget',
         'source_organization': 'Queensland Police Service',
-        'notes': 'Funding estimate based on $78.1M program budget divided across 5 locations.'
     },
 ]
 
