@@ -136,7 +136,7 @@ PCYC_PROGRAMS = [
         'title': 'PCYC Cairns Boxing & Fitness Program',
         'url': 'https://statements.qld.gov.au/statements/96234',
         'statement_id': '96234',
-        'published_date': 2022-09-28',
+        'published_date': '2022-09-28',
         'funding_amount_extracted': 2800000,  # $2.8M
         'published_date_confidence': 0.90,
         'funding_confidence': 0.85,
