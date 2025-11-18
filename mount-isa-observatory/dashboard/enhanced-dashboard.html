@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queensland Youth Funding Observatory - Enhanced</title>
+
+    <!-- SEO & Social Media -->
+    <meta name="description" content="Interactive data platform tracking Queensland government youth funding across communities. Real-time statistics, per capita analysis, and program details.">
+    <meta property="og:title" content="Queensland Youth Funding Observatory">
+    <meta property="og:description" content="Explore $686M+ in youth funding across Queensland communities">
+    <meta property="og:type" content="website">
+
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #9333ea;
+            --primary-dark: #7e22ce;
+            --primary-light: #a78bfa;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 100px;
+            z-index: 99;
+        }
+
+        .stats-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Controls */
+        .controls {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .control-panel {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .control-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        input, select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .search-box input {
+            padding-left: 2.5rem;
+        }
+
+        .button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .button-secondary {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+        }
+
+        .button-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .community-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .community-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(147, 51, 234, 0.2);
+        }
+
+        .community-card.highlight {
+            border: 2px solid var(--primary);
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, transparent 100%);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .community-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .highlight-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .card-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+        }
+
+        .card-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .card-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .card-categories {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: rgba(147, 51, 234, 0.2);
+            color: var(--primary-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin: 0.25rem;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            max-width: 1400px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container {
+            height: 400px;
+            position: relative;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .control-row {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Share Buttons */
+        .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .share-btn:hover {
+            background: var(--border);
+        }
+
+        .share-btn i {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1><i class="fas fa-chart-line"></i> Queensland Youth Funding Observatory</h1>
+            <p class="subtitle">Real-time data platform tracking government investment in youth programs</p>
+        </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-value" id="totalFunding">$0M</span>
+                <span class="stat-label">Total Funding</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalPrograms">0</span>
+                <span class="stat-label">Programs</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalCommunities">0</span>
+                <span class="stat-label">Communities</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="avgPerCapita">$0</span>
+                <span class="stat-label">Avg Per Capita</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="control-panel">
+            <div class="control-row">
+                <div class="control-group search-box">
+                    <label for="search">Search Programs</label>
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Search by program name, category, or community...">
+                </div>
+
+                <div class="control-group">
+                    <label for="communityFilter">Filter by Community</label>
+                    <select id="communityFilter">
+                        <option value="">All Communities</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="categoryFilter">Filter by Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="funding-desc">Total Funding (High to Low)</option>
+                        <option value="funding-asc">Total Funding (Low to High)</option>
+                        <option value="per-capita-desc">Per Capita (High to Low)</option>
+                        <option value="per-capita-asc">Per Capita (Low to High)</option>
+                        <option value="programs-desc">Program Count (High to Low)</option>
+                        <option value="name-asc">Community Name (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-row" style="margin-bottom: 0;">
+                <div class="control-group">
+                    <label>Actions</label>
+                    <div class="share-buttons">
+                        <button class="share-btn" onclick="exportData()">
+                            <i class="fas fa-download"></i> Export Data
+                        </button>
+                        <button class="share-btn" onclick="shareOnTwitter()">
+                            <i class="fab fa-twitter"></i> Share
+                        </button>
+                        <button class="share-btn" onclick="copyLink()">
+                            <i class="fas fa-link"></i> Copy Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading" id="loading">
+        <i class="fas fa-spinner"></i>
+        <p>Loading funding data from Supabase...</p>
+    </div>
+
+    <!-- Community Cards -->
+    <div class="cards-grid" id="communityCards"></div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <i class="fas fa-filter"></i>
+        <h2>No communities match your filters</h2>
+        <p>Try adjusting your search or filter criteria</p>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section" id="chartsSection" style="display: none;">
+        <h2 class="chart-title"><i class="fas fa-chart-bar"></i> Funding Analysis</h2>
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3 class="chart-title">Top Communities by Total Funding</h3>
+                <div class="chart-container">
+                    <canvas id="fundingChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3 class="chart-title">Per Capita Funding Comparison</h3>
+                <div class="chart-container">
+                    <canvas id="perCapitaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Configuration - UPDATE THESE WITH YOUR SUPABASE CREDENTIALS
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';  // Replace with your URL
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // Replace with your anon key
+
+        // Population data for per capita calculations
+        const POPULATION_DATA = {
+            'Mount Isa': 18500,
+            'Logan': 326615,
+            'Townsville': 180820,
+            'Cairns': 153075,
+            'Gold Coast': 591473,
+            'Ipswich': 229208,
+            'Rockhampton': 80665,
+            'Toowoomba': 136861,
+            'Fraser Coast': 103756,
+            'Palm Island': 2700,
+            'Brisbane': 1200000,
+        };
+
+        // Initialize app
+        let allPrograms = [];
+        let communityData = {};
+        let supabase = null;
+
+        async function initializeApp() {
+            // Check if Supabase is configured
+            if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                document.getElementById('loading').innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                    <h2>Supabase Not Configured</h2>
+                    <p>Please update SUPABASE_URL and SUPABASE_ANON_KEY in the script</p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+                        Find these values in your Supabase project settings → API
+                    </p>
+                `;
+                return;
+            }
+
+            // Initialize Supabase client
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            // Fetch data
+            await fetchData();
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Initial render
+            renderDashboard();
+        }
+
+        async function fetchData() {
+            try {
+                // Fetch all programs from Supabase
+                const { data, error } = await supabase
+                    .from('documents')
+                    .select('*');
+
+                if (error) throw error;
+
+                allPrograms = data || [];
+                processData();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('chartsSection').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #ef4444;"></i>
+                    <h2>Error Loading Data</h2>
+                    <p>${error.message}</p>
+                    <button class="button" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> Retry
+                    </button>
+                `;
+            }
+        }
+
+        function processData() {
+            communityData = {};
+
+            allPrograms.forEach(program => {
+                const locations = program.locations_mentioned || [];
+                const funding = program.funding_amount_extracted || 0;
+                const categories = program.categories || [];
+
+                locations.forEach(location => {
+                    if (!communityData[location]) {
+                        communityData[location] = {
+                            name: location,
+                            totalFunding: 0,
+                            programs: [],
+                            population: POPULATION_DATA[location] || 0,
+                            categories: new Set()
+                        };
+                    }
+
+                    communityData[location].totalFunding += funding;
+                    communityData[location].programs.push(program);
+                    categories.forEach(cat => communityData[location].categories.add(cat));
+                });
+            });
+
+            // Calculate per capita
+            Object.values(communityData).forEach(community => {
+                if (community.population > 0) {
+                    community.perCapita = community.totalFunding / community.population;
+                } else {
+                    community.perCapita = 0;
+                }
+                community.categories = Array.from(community.categories);
+            });
+
+            // Populate filter dropdowns
+            populateFilters();
+            updateStats();
+        }
+
+        function populateFilters() {
+            const communityFilter = document.getElementById('communityFilter');
+            const categoryFilter = document.getElementById('categoryFilter');
+
+            // Communities
+            const communities = Object.keys(communityData).sort();
+            communities.forEach(community => {
+                const option = document.createElement('option');
+                option.value = community;
+                option.textContent = community;
+                communityFilter.appendChild(option);
+            });
+
+            // Categories
+            const allCategories = new Set();
+            Object.values(communityData).forEach(c => {
+                c.categories.forEach(cat => allCategories.add(cat));
+            });
+
+            Array.from(allCategories).sort().forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        function updateStats() {
+            const totalFunding = Object.values(communityData).reduce((sum, c) => sum + c.totalFunding, 0);
+            const totalPrograms = allPrograms.length;
+            const totalCommunities = Object.keys(communityData).length;
+            const communitiesWithPop = Object.values(communityData).filter(c => c.population > 0);
+            const avgPerCapita = communitiesWithPop.reduce((sum, c) => sum + c.perCapita, 0) / communitiesWithPop.length;
+
+            document.getElementById('totalFunding').textContent = '$' + (totalFunding / 1000000).toFixed(1) + 'M';
+            document.getElementById('totalPrograms').textContent = totalPrograms;
+            document.getElementById('totalCommunities').textContent = totalCommunities;
+            document.getElementById('avgPerCapita').textContent = '$' + Math.round(avgPerCapita).toLocaleString();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('search').addEventListener('input', renderDashboard);
+            document.getElementById('communityFilter').addEventListener('change', renderDashboard);
+            document.getElementById('categoryFilter').addEventListener('change', renderDashboard);
+            document.getElementById('sortBy').addEventListener('change', renderDashboard);
+        }
+
+        function renderDashboard() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const communityFilter = document.getElementById('communityFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            // Filter communities
+            let filtered = Object.values(communityData).filter(community => {
+                // Search filter
+                if (search) {
+                    const matchesName = community.name.toLowerCase().includes(search);
+                    const matchesProgram = community.programs.some(p =>
+                        (p.title || '').toLowerCase().includes(search)
+                    );
+                    const matchesCategory = community.categories.some(c =>
+                        c.toLowerCase().includes(search)
+                    );
+                    if (!matchesName && !matchesProgram && !matchesCategory) return false;
+                }
+
+                // Community filter
+                if (communityFilter && community.name !== communityFilter) return false;
+
+                // Category filter
+                if (categoryFilter && !community.categories.includes(categoryFilter)) return false;
+
+                return true;
+            });
+
+            // Sort communities
+            filtered.sort((a, b) => {
+                switch(sortBy) {
+                    case 'funding-desc': return b.totalFunding - a.totalFunding;
+                    case 'funding-asc': return a.totalFunding - b.totalFunding;
+                    case 'per-capita-desc': return b.perCapita - a.perCapita;
+                    case 'per-capita-asc': return a.perCapita - b.perCapita;
+                    case 'programs-desc': return b.programs.length - a.programs.length;
+                    case 'name-asc': return a.name.localeCompare(b.name);
+                    default: return 0;
+                }
+            });
+
+            // Render cards
+            renderCommunityCards(filtered);
+
+            // Render charts
+            renderCharts(filtered);
+        }
+
+        function renderCommunityCards(communities) {
+            const container = document.getElementById('communityCards');
+            const emptyState = document.getElementById('emptyState');
+
+            if (communities.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            container.innerHTML = '';
+
+            communities.forEach(community => {
+                const card = document.createElement('div');
+                card.className = 'community-card' + (community.name === 'Mount Isa' ? ' highlight' : '');
+
+                const categoriesHTML = community.categories.slice(0, 5).map(cat =>
+                    `<span class="category-tag">${cat}</span>`
+                ).join('');
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="community-name">${community.name}</h3>
+                        ${community.name === 'Mount Isa' ? '<span class="highlight-badge">#1 Per Capita</span>' : ''}
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">$${(community.totalFunding / 1000000).toFixed(1)}M</div>
+                            <div class="card-stat-label">Total Funding</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">${community.perCapita > 0 ? '$' + Math.round(community.perCapita).toLocaleString() : 'N/A'}</div>
+                            <div class="card-stat-label">Per Capita</div>
+                        </div>
+                    </div>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-value">${community.programs.length}</div>
+                            <div class="card-stat-label">Programs</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-value">${community.population.toLocaleString()}</div>
+                            <div class="card-stat-label">Population</div>
+                        </div>
+                    </div>
+                    <div class="card-categories">
+                        ${categoriesHTML}
+                        ${community.categories.length > 5 ? `<span class="category-tag">+${community.categories.length - 5} more</span>` : ''}
+                    </div>
+                `;
+
+                card.addEventListener('click', () => showCommunityDetails(community));
+                container.appendChild(card);
+            });
+        }
+
+        let fundingChart, perCapitaChart;
+
+        function renderCharts(communities) {
+            const top10 = communities.slice(0, 10);
+
+            // Funding Chart
+            const fundingCtx = document.getElementById('fundingChart');
+            if (fundingChart) fundingChart.destroy();
+
+            fundingChart = new Chart(fundingCtx, {
+                type: 'bar',
+                data: {
+                    labels: top10.map(c => c.name),
+                    datasets: [{
+                        label: 'Total Funding',
+                        data: top10.map(c => c.totalFunding),
+                        backgroundColor: top10.map(c => c.name === 'Mount Isa' ? '#9333ea' : '#a78bfa'),
+                        borderColor: top10.map(c => c.name === 'Mount Isa' ? '#7e22ce' : '#8b5cf6'),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => '$' + (context.parsed.y / 1000000).toFixed(1) + 'M'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => '$' + (value / 1000000).toFixed(0) + 'M'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Per Capita Chart
+            const withPop = top10.filter(c => c.perCapita > 0);
+            const perCapitaCtx = document.getElementById('perCapitaChart');
+            if (perCapitaChart) perCapitaChart.destroy();
+
+            perCapitaChart = new Chart(perCapitaCtx, {
+                type: 'bar',
+                data: {
+                    labels: withPop.map(c => c.name),
+                    datasets: [{
+                        label: 'Per Capita Funding',
+                        data: withPop.map(c => c.perCapita),
+                        backgroundColor: withPop.map(c => c.name === 'Mount Isa' ? '#9333ea' : '#c4b5fd'),
+                        borderColor: withPop.map(c => c.name === 'Mount Isa' ? '#7e22ce' : '#a78bfa'),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => '$' + Math.round(context.parsed.x).toLocaleString()
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => '$' + Math.round(value).toLocaleString()
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function showCommunityDetails(community) {
+            alert(`Community Details for ${community.name}\n\nThis will open a detailed view in Phase 2!\n\nTotal: $${(community.totalFunding / 1000000).toFixed(1)}M\nPrograms: ${community.programs.length}\nPer Capita: $${Math.round(community.perCapita).toLocaleString()}`);
+        }
+
+        function exportData() {
+            const csv = generateCSV();
+            downloadFile(csv, 'queensland-funding-data.csv', 'text/csv');
+        }
+
+        function generateCSV() {
+            let csv = 'Community,Total Funding,Programs,Population,Per Capita\n';
+            Object.values(communityData).forEach(c => {
+                csv += `"${c.name}",${c.totalFunding},${c.programs.length},${c.population},${c.perCapita.toFixed(2)}\n`;
+            });
+            return csv;
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function shareOnTwitter() {
+            const text = `Queensland invests $${(Object.values(communityData).reduce((s, c) => s + c.totalFunding, 0) / 1000000).toFixed(0)}M+ in youth programs across ${Object.keys(communityData).length} communities. Mount Isa leads per capita at $${Math.round(communityData['Mount Isa']?.perCapita || 0).toLocaleString()}/person!`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Link copied to clipboard!');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
