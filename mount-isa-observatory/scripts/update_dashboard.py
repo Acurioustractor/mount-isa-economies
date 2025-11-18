@@ -43,7 +43,7 @@ def analyze_communities(programs):
 
     for program in programs:
         locations = program.get('locations_mentioned', [])
-        funding = program.get('funding_amount_extracted', 0)
+        funding = program.get('funding_amount_extracted') or 0  # Handle None values
         categories = program.get('categories', [])
         title = program.get('title', 'Unknown')
 

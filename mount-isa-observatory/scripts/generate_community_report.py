@@ -35,7 +35,7 @@ def generate_report(programs):
     """Generate markdown report"""
 
     # Calculate totals
-    total_funding = sum(p.get('funding_amount_extracted', 0) for p in programs)
+    total_funding = sum(p.get('funding_amount_extracted') or 0 for p in programs)
     per_capita = total_funding / MOUNT_ISA_POPULATION
 
     # Group by category
@@ -87,20 +87,20 @@ Mount Isa's high per capita funding reflects several factors:
 """
 
     # Add programs by category
-    sorted_categories = sorted(categories.items(), key=lambda x: sum(p.get('funding_amount_extracted', 0) for p in x[1]), reverse=True)
+    sorted_categories = sorted(categories.items(), key=lambda x: sum(p.get('funding_amount_extracted') or 0 for p in x[1]), reverse=True)
 
     for category, cat_programs in sorted_categories:
-        cat_total = sum(p.get('funding_amount_extracted', 0) for p in cat_programs)
+        cat_total = sum(p.get('funding_amount_extracted') or 0 for p in cat_programs)
 
         report += f"### {category}\n\n"
         report += f"**Total Investment:** ${cat_total:,.0f} ({len(cat_programs)} program{'s' if len(cat_programs) > 1 else ''})\n\n"
 
         # Sort programs by funding amount
-        sorted_programs = sorted(cat_programs, key=lambda x: x.get('funding_amount_extracted', 0), reverse=True)
+        sorted_programs = sorted(cat_programs, key=lambda x: x.get('funding_amount_extracted') or 0, reverse=True)
 
         for program in sorted_programs:
             title = program.get('title', 'Unknown Program')
-            amount = program.get('funding_amount_extracted', 0)
+            amount = program.get('funding_amount_extracted') or 0
             source = program.get('source_organization', 'Queensland Government')
             date = program.get('published_date', 'Unknown')
             url = program.get('url', '')

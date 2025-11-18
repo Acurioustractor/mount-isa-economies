@@ -59,7 +59,7 @@ def analyze_by_community(programs):
 
     for program in programs:
         locations = program.get('locations_mentioned', [])
-        funding = program.get('funding_amount_extracted', 0)
+        funding = program.get('funding_amount_extracted') or 0  # Handle None values
         categories = program.get('categories', [])
 
         if not locations:
@@ -90,7 +90,7 @@ def analyze_by_category(programs):
 
     for program in programs:
         categories = program.get('categories', [])
-        funding = program.get('funding_amount_extracted', 0)
+        funding = program.get('funding_amount_extracted') or 0  # Handle None values
 
         if not categories:
             categories = ['Uncategorized']
